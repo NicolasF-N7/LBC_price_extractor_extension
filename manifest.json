@@ -1,0 +1,26 @@
+{
+  "name": "LBC price extractor",
+  "description": "30yo birthday Jeremy gift :D. It allows to extract prices of a specific object on LBC.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "media/icons/jeje.png",
+    "32": "media/icons/jeje.png",
+    "48": "media/icons/jeje.png",
+    "128": "media/icons/jeje.png"
+  },
+  "permissions": ["storage", "declarativeContent", "activeTab", "scripting", "downloads"],
+  "background": {
+    "service_worker": "background_script.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "media/images/get_started16.png",
+      "32": "/media/images/get_started32.png",
+      "48": "media/images/get_started48.png",
+      "128": "media/images/get_started128.png"
+    }
+  },
+  "options_page": "options.html"
+}
