@@ -35,6 +35,7 @@ chrome.runtime.onMessage.addListener(
         chrome.downloads.show(dlItemId);
       });
     }
+    
     return true;
   }
 );

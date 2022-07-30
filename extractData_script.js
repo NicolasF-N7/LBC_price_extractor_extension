@@ -120,9 +120,14 @@ console.log(pricesList.length + " elements found on this page.");
 let csvLinesArray = [titleList, pricesList, yearsList, mileageList].reduce((accumulator, currValue) => accumulator.map((value, i) => value + ', ' + currValue[i]));
 
 
-let csvFormattedData = "Title,Price,Year,Mileage\n";
+let csvFormattedData = "Title,Price,Year,Mileage\n";//Add columns title
 csvFormattedData += csvLinesArray.join('\n');
 
 //Send message to background script with data
 let request = {csvFormattedData: csvFormattedData};
 chrome.runtime.sendMessage(request, function(response) {});
+/*
+//Click on next page btn
+let nextPageSelector = "#mainContent > div > div > div > div > nav > ul > li:nth-last-child(1) > a";
+let nextPageLinkElem = document.querySelector(nextPageSelector);
+nextPageLinkElem.click();*/
