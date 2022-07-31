@@ -1,6 +1,6 @@
 // This file will be executed as a content script inside the current page
 
-let extractTitle = function() {
+var extractTitle = function() {
   let titleElemList;
   let titleList = [];
   let titleElementsSelector = "#mainContent > div > div > div > div > div > div > a > div > div > div:nth-child(1) > div >p";
@@ -27,7 +27,7 @@ let extractTitle = function() {
   }
   return titleList;
 }
-let extractPrices = function() {
+var extractPrices = function() {
   let pricesElemList;
   let pricesList = [];
   let pricesElementsSelector = "#mainContent > div > div > div > div > div > div > a > div > div > div:nth-child(1) > p > span > span";
@@ -54,7 +54,7 @@ let extractPrices = function() {
   }
   return pricesList;
 }
-let extractYear = function () {
+var extractYear = function () {
   let yearsElemList;
   let yearsList = [];
   //Try getting prices elem on the page
@@ -80,7 +80,7 @@ let extractYear = function () {
   }
   return yearsList;
 }
-let extractMileage = function () {
+var extractMileage = function () {
   let mileageElemList;
   let mileageList = [];
   //Try getting prices elem on the page
@@ -108,26 +108,49 @@ let extractMileage = function () {
 }
 
 console.log("Start extracting data");
-let titleList = extractTitle();
-let pricesList = extractPrices();
-let yearsList = extractYear();
-let mileageList = extractMileage();
+var titleList = [];
+var pricesList = [];
+var yearsList = [];
+var mileageList = [];
+var count = 0;
+while(count < 5 && pricesList.length == 0){
+  titleList = extractTitle();
+  pricesList = extractPrices();
+  yearsList = extractYear();
+  mileageList = extractMileage();
+  count++;
+}
+
 
 console.log(pricesList.length + " elements found on this page.");
 
 //Aggregate all data into one unique object
 //This array contains every line of the csv file
-let csvLinesArray = [titleList, pricesList, yearsList, mileageList].reduce((accumulator, currValue) => accumulator.map((value, i) => value + ', ' + currValue[i]));
+var csvLinesArray = [titleList, pricesList, yearsList, mileageList].reduce((accumulator, currValue) => accumulator.map((value, i) => value + ', ' + currValue[i]));
+var csvFormattedData;
+csvFormattedData += csvLinesArray.join('\n');//Add every lines of the array to the csv file
 
+//Assess if next page of leboncoin posts is available.
+var nextPageAvailable = false;
+var nextPageSelector = "#mainContent > div > div > div > div > nav > ul > li:nth-last-child(1) > a";
+try{
+  let nextPageLinkElem = document.querySelector(nextPageSelector);
+  nextPageAvailable = true;
+  //If available, go to the next page
+  nextPageLinkElem.click();
+}catch(err){
+  console.log("This was the last page for this research");
+  nextPageAvailable = false;
+}
 
-let csvFormattedData = "Title,Price,Year,Mileage\n";//Add columns title
-csvFormattedData += csvLinesArray.join('\n');
-
-//Send message to background script with data
-let request = {csvFormattedData: csvFormattedData};
+//Send message to popup script with data
+var request = {
+  csvFormattedData: csvFormattedData,
+  nextPageAvailable: nextPageAvailable
+};
 chrome.runtime.sendMessage(request, function(response) {});
 /*
 //Click on next page btn
-let nextPageSelector = "#mainContent > div > div > div > div > nav > ul > li:nth-last-child(1) > a";
-let nextPageLinkElem = document.querySelector(nextPageSelector);
-nextPageLinkElem.click();*/
+
+
+*/
